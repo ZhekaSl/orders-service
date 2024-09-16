@@ -1,13 +1,21 @@
 package ru.javaops.cloudjava.ordersservice.testdata;
 
 import java.math.BigDecimal;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.Month;
 
 public class TestConstants {
 
-    public static final String BASE_URL = "/v1/menu-order";
-    public static final String MENU_INFO_PATH = "/v1/menu-item/menu-info";
+    public static final int DELAY_MILLIS = 1500;
+    public static final int RETRY_COUNT = 3;
+    public static final double RETRY_JITTER = 0.75;
+    public static final Duration DEFAULT_TIMEOUT = Duration.ofSeconds(1);
+    public static final String DEFAULT_TIMEOUT_STR = "1s";
+    public static final Duration RETRY_BACKOFF = Duration.ofMillis(10);
+
+    public static final String BASE_URL = "/v1/menu-orders";
+    public static final String MENU_INFO_PATH = "/v1/menu-items/menu-info";
 
     public static final String CITY_ONE = "CityOne";
     public static final String STREET_ONE = "StreetOne";
@@ -33,5 +41,4 @@ public class TestConstants {
     public static final LocalDateTime ORDER_ONE_DATE = LocalDateTime.of(2024, Month.FEBRUARY, 18, 10, 23, 54);
     public static final LocalDateTime ORDER_TWO_DATE = LocalDateTime.of(2024, Month.FEBRUARY, 20, 10, 23, 54);
     public static final LocalDateTime ORDER_THREE_DATE = LocalDateTime.of(2024, Month.FEBRUARY, 22, 10, 23, 54);
-
 }
