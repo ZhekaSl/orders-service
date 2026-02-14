@@ -41,6 +41,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Set image name (lowercase for Docker)
+        run: echo "IMAGE_NAME=$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')/orders-service" >> $GITHUB_ENV
       - name: Setup JDK
         uses: actions/setup-java@v4
         with:

@@ -60,7 +60,7 @@ public class GlobalExceptionHandler {
     public Mono<ResponseEntity<ProblemDetail>> handleHandlerMethodValidationException(HandlerMethodValidationException ex, ServerHttpRequest request) {
         var pd = ex.getBody();
         Map<String, String> errors = new HashMap<>();
-        ex.getAllValidationResults().forEach(result -> {
+        ex.getParameterValidationResults().forEach(result -> {
             result.getResolvableErrors().forEach(e -> {
                 errors.put(result.getMethodParameter().getParameterName(), e.getDefaultMessage());
             });
