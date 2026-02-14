@@ -2,10 +2,14 @@ name: Commit Checks # название нашего workflow
 on: # Запускаем workflow при push и pull-request в ветку master.
   push:
     branches:
-      - main
+      - k8s
   pull_request:
     branches:
       - main
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository_owner }}/orders-service
+  VERSION: ${{ github.sha }}
 
 jobs:
   build-and-test: # описываем процесс сборки и тестирования проекта
@@ -27,3 +31,31 @@ jobs:
         run: |
           chmod +x gradlew
           ./gradlew build
+  publish-image:
+    name: Publish Docker Image
+    needs: [build-and-test]
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+          cache: gradle
+      - name: Build Image
+        run: |
+          chmod +x gradlew
+          ./gradlew bootBuildImage --imageName ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.VERSION }}
+      - name: Log in Registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+      - name: Publish Container to Registry
+        run: docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.VERSION }}
+      - name: Publish Container to Registry latest version
+        run: |
+          docker tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.VERSION }} ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest 
+          docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
